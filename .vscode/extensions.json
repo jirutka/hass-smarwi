@@ -1,0 +1,15 @@
+{
+  // List of extensions which should be recommended for users of this workspace.
+  "recommendations": [
+    "charliermarsh.ruff",
+    "detachhead.basedpyright",
+    "EditorConfig.EditorConfig",
+    "ms-python.python",
+  ],
+  // List of extensions recommended by VSCodium that should not be recommended
+  // for users of this workspace.
+  "unwantedRecommendations": [
+    // We use basedpyright instead.
+    "ms-python.vscode-pylance"
+  ]
+}

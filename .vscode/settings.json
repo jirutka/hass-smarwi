@@ -1,0 +1,10 @@
+{
+  "basedpyright.importStrategy": "fromEnvironment",
+  // This conflicts with basedpyright
+  "python.languageServer": "None",
+
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+  },
+}

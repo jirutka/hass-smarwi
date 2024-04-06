@@ -1,0 +1,3 @@
+[tool.basedpyright]
+include = ["custom_components/"]
+typeCheckingMode = "all"

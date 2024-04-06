@@ -1,35 +1,31 @@
-name: "Release"
+name: Release
 
 on:
   release:
     types:
-      - "published"
+      - published
 
 permissions: {}
 
 jobs:
   release:
-    name: "Release"
-    runs-on: "ubuntu-latest"
+    name: Release
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: "Checkout the repository"
-        uses: "actions/checkout@v4.1.0"
+      - uses: actions/checkout@v4
 
-      - name: "Adjust version number"
-        shell: "bash"
+      - name: Adjust version number
         run: |
           yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
-            "${{ github.workspace }}/custom_components/integration_blueprint/manifest.json"
+            custom_components/integration_blueprint/manifest.json
 
-      - name: "ZIP the integration directory"
-        shell: "bash"
-        run: |
-          cd "${{ github.workspace }}/custom_components/integration_blueprint"
-          zip integration_blueprint.zip -r ./
+      - name: ZIP the integration directory
+        run: zip integration_blueprint.zip -r ./
+        working-directory: custom_components/integration_blueprint
 
-      - name: "Upload the ZIP file to the release"
-        uses: softprops/action-gh-release@v0.1.15
+      - name: Upload the ZIP file to the release
+        uses: softprops/action-gh-release@v2
         with:
-          files: ${{ github.workspace }}/custom_components/integration_blueprint/integration_blueprint.zip
+          files: custom_components/integration_blueprint/integration_blueprint.zip

@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-
+#!/bin/sh
 set -e
 
 cd "$(dirname "$0")/.."
+. .venv/bin/activate
 
-ruff check . --fix
+python3 -m ruff check . --fix
