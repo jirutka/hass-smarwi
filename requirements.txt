@@ -1,4 +1,6 @@
-colorlog==6.7.0
-homeassistant==2023.8.0
-pip>=21.0,<23.2
-ruff==0.0.292
+basedpyright>=1.10.0
+colorlog>=6.7.0
+homeassistant==2024.1.0
+homeassistant-stubs==2024.1.0
+ruff>=0.3.0
+voluptuous-stubs>=0.1.1

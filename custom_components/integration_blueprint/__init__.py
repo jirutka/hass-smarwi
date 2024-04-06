@@ -3,6 +3,7 @@
 For more details about this integration, please refer to
 https://github.com/ludeeus/integration_blueprint
 """
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
