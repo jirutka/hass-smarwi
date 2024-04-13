@@ -1,0 +1,70 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Before adding this integration, set up the MQTT integration in Home Assistant and configure your SMARWI devices to use your local MQTT broker.",
+        "data": {
+          "remote_id": "Remote ID (configured in SMARWI Settings)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "ridge_inside": {
+        "name": "Ridge inside"
+      }
+    },
+    "cover": {
+      "cover": {
+        "name": "Window"
+      }
+    },
+    "number": {
+      "max_open_position": {
+        "name": "Maximum open position"
+      },
+      "move_speed": {
+        "name": "Movement speed"
+      },
+      "frame_speed": {
+        "name": "Near frame speed"
+      },
+      "move_power": {
+        "name": "Movement power"
+      },
+      "frame_power": {
+        "name": "Near frame power"
+      },
+      "closed_hold_power": {
+        "name": "Closed holding power"
+      },
+      "opened_hold_power": {
+        "name": "Opened holding power"
+      },
+      "closed_position": {
+        "name": "Window closed position finetune"
+      },
+      "lock_err_trigger": {
+        "name": "Window locked error trigger"
+      },
+      "calibrated_distance": {
+        "name": "Calibrated distance"
+       }
+    },
+    "sensor": {
+      "rssi": {
+        "name": "Signal strength"
+      }
+    },
+    "switch": {
+      "ridge_fix": {
+        "name": "Ridge fixed",
+        "state": {
+          "on": "Fixed",
+          "off": "Free"
+        }
+      }
+    }
+  }
+}

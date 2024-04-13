@@ -1,0 +1,12 @@
+{
+    "domain": "smarwi",
+    "name": "SMARWI",
+    "version": "0.0.0",
+    "documentation": "https://www.example.com",
+    "codeowners": ["@jirutka"],
+    "config_flow": true,
+    "integration_type": "device",
+    "iot_class": "local_push",
+    "dependencies": ["mqtt"],
+    "requirements": ["aiohttp"]
+  }

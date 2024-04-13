@@ -1,61 +1,117 @@
-= Notice
+= SMARWI Integration
+:proj-name: smarwi
+:gh-name: jirutka/{proj-name}
+:badge-style: flat-square
 
-The component and platforms in this repository are not meant to be used by a user, but as a “blueprint” that custom component developers can build upon, to make more awesome stuff.
+image:https://img.shields.io/github/release/{gh-name}.svg?style={badge-style}[GitHub Release, link=https://github.com/{gh-name}/releases]
 
-HAVE FUN! 😎
-
-
-== Why?
-
-This is simple, by having custom_components look (README + structure) the same it is easier for developers to help each other and for users to start using them.
-
-If you are a developer and you want to add things to this “blueprint” that you think more developers will have use for, please open a PR to add it :)
+Home Assistant integration for Vektiva https://vektiva.com/smarwi/[SMARWI] actuator (opener).
 
 
-== What?
+== Installation
 
-This repository contains multiple files, here is a overview:
+. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
+. If you do not have a `custom_components` directory (folder) there, you need to create it.
+. In the `custom_components` directory (folder) create a new directory called `{proj-name}`.
+. Download _all_ the files from the `custom_components/{proj-name}/` directory (folder) in this repository.
+. Place the files you downloaded in the new directory (folder) you created.
+. Restart Home Assistant
+. In the HA UI go to “Configuration” -> “Integrations” click “+” and search for “SMARWI”
+
+
+== Entities
+
+The integration will create the following entities for each discovered SMARWI device.
 
 |===
-| File | Purpose | Documentation
+| Name | Platform | Device Class | Category | Description
 
-| `.vscode/tasks.json`
-| Tasks for the devcontainer.
-| https://code.visualstudio.com/docs/editor/tasks[Documentation]
+| cover
+| cover
+| WINDOW
+|
+| Control the window tilt position (open, close, stop, set position).
 
-| `custom_components/integration_blueprint/*`
-| Integration files, this is where everything happens.
-| https://developers.home-assistant.io/docs/creating_component_index[Documentation]
+| ridge_fix
+| switch
+| SWITCH
+|
+| Fix or release the ridge (can be used only if the motor is currently not moving).
 
-| `LICENSE`
-| The license file for the project.
-| https://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository[Documentation]
+| ridge_inside
+| binary_sensor
+| TAMPER
+| DIAGNOSTIC
+| Shows if the ridge is inside the device (i.e. it’s operational).
 
-| `README.adoc`
-| The file you are reading now, should contain info about the integration, installation and configuration instructions.
-| https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax[Documentation]
+| rssi
+| sensor
+| SIGNAL_STRENGTH
+| DIAGNOSTIC
+| Monitor WiFi signal strength (disabled by default).
 
-| `requirements.txt`
-| Python packages used for development/lint/testing this integration.
-| https://pip.pypa.io/en/stable/user_guide/#requirements-files[Documentation]
+| max_open_position
+| number
+|
+| CONFIG
+| Set maximum open position (finetune setting).
+
+| move_speed
+| number
+|
+| CONFIG
+| Set movement speed (finetune setting).
+
+| frame_speed
+| number
+|
+| CONFIG
+| Set near frame speed (finetune setting).
+
+| move_power
+| number
+|
+| CONFIG
+| Set movement power (finetune setting).
+
+| frame_power
+| number
+|
+| CONFIG
+| Set near frame power (finetune setting).
+
+| closed_hold_power
+| number
+|
+| CONFIG
+| Set closed holding power (finetune setting).
+
+| opened_hold_power
+| number
+|
+| CONFIG
+| Set opened holding power (finetune setting).
+
+| closed_position
+| number
+|
+| CONFIG
+| Set window closed position finetune (finetune setting).
+
+| lock_err_trigger
+| number
+|
+| CONFIG
+| Set window locked error trigger (finetune setting).
+
+| calibrated_distance
+| number
+|
+| CONFIG
+| Set calibrated distance (finetune setting).
 |===
 
 
-== How?
+== License
 
-. Create a new repository in GitHub, using this repository as a template by clicking the “Use this template” button in the GitHub UI.
-. Open your new repository in Visual Studio Code.
-. Rename all instances of the `integration_blueprint` to `custom_components/<your_integration_domain>` (e.g. `custom_components/awesome_integration`).
-. Rename all instances of the `Integration Blueprint` to `<Your Integration Name>` (e.g. `Awesome Integration`).
-. Run the link:scripts/develop[`scripts/develop`] to start HA and test out your new integration.
-
-
-== Next steps
-
-These are some next steps you may want to look into:
-
-* Add tests to your integration, https://github.com/MatthewFlamm/pytest-homeassistant-custom-component[`pytest-homeassistant-custom-component`] can help you get started.
-* Add brand images (logo/icon) to https://github.com/home-assistant/brands.
-* Create your first release.
-* Share your integration on the https://community.home-assistant.io/[Home Assistant Forum].
-* Submit your integration to the https://hacs.xyz/docs/publish/start[HACS].
+This project is licensed under https://opensource.org/license/MIT[MIT License].

@@ -19,13 +19,13 @@ jobs:
       - name: Adjust version number
         run: |
           yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
-            custom_components/integration_blueprint/manifest.json
+            custom_components/smarwi/manifest.json
 
       - name: ZIP the integration directory
-        run: zip integration_blueprint.zip -r ./
-        working-directory: custom_components/integration_blueprint
+        run: zip smarwi.zip -r ./
+        working-directory: custom_components/smarwi
 
       - name: Upload the ZIP file to the release
         uses: softprops/action-gh-release@v2
         with:
-          files: custom_components/integration_blueprint/integration_blueprint.zip
+          files: custom_components/smarwi/smarwi.zip

@@ -4,9 +4,7 @@
     "charliermarsh.ruff",
     "detachhead.basedpyright",
     "EditorConfig.EditorConfig",
-    "github.vscode-pull-request-github",
     "ms-python.python",
-    "ryanluker.vscode-coverage-gutters",
   ],
   // List of extensions recommended by VSCodium that should not be recommended
   // for users of this workspace.
