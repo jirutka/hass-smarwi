@@ -1,8 +1,8 @@
 {
-  "name": "Integration blueprint",
-  "filename": "integration_blueprint.zip",
-  "hide_default_branch": true,
-  "homeassistant": "2024.1.0",
+  "name": "SMARWI",
+  "zip_release": true,
+  "filename": "smarwi.zip",
   "render_readme": true,
-  "zip_release": true
+  "hide_default_branch": true,
+  "homeassistant": "2024.1.0"
 }
