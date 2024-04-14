@@ -22,6 +22,7 @@ from .const import (
     DEVICE_INFO_MANUFACTURER,
     DEVICE_INFO_MODEL,
     DOMAIN,
+    HTTP_TIMEOUT,
     LOGGER,
     signal_device_update,
 )
@@ -399,7 +400,7 @@ async def http_get(host: str, path: str) -> str:
     """Send HTTP GET request and return the response body."""
     LOGGER.debug(f"Sending GET http://{host}/{path}")
     async with (
-        aiohttp.ClientSession(raise_for_status=True) as http,
+        aiohttp.ClientSession(raise_for_status=True, timeout=HTTP_TIMEOUT) as http,
         http.get(f"http://{host}/{path}") as resp,
     ):
         data = await resp.text()
@@ -416,5 +417,7 @@ async def http_post_data(host: str, path: str, data: str) -> None:
             "form-data", name="data", filename="/afile"
         )
         LOGGER.debug(f"POST http://{host}/{path}:\n{data}")
-        async with aiohttp.ClientSession(raise_for_status=True) as http:
+        async with aiohttp.ClientSession(
+            raise_for_status=True, timeout=HTTP_TIMEOUT
+        ) as http:
             await http.post(f"http://{host}/{path}", data=mpwriter)  # pyright:ignore[reportUnusedCallResult]
