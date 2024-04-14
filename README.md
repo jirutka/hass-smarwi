@@ -21,6 +21,10 @@ It uses a local MQTT broker, no “cloud” service is required.
 1. Click on the **Download** button in the bottom right corner.
 1. Restart Home Assistant.
 
+**TIP:** You can skip steps 2–4 by opening:
+
+[![Add jirutka/hass-smarwi repository to your Home Assistant instance][my-hacs-repo-img]][my-hacs-repo]
+
 
 ### Manually
 
@@ -58,12 +62,16 @@ SMARWI should be connected to your Wi-Fi network and MQTT broker now.
 ### 3. Add integration
 
 1. Browse to your Home Assistant instance.
-1. Go to [**Settings > Devices & Services**][my-hass-integrations].
-1. In the bottom right corner, select the [⊕ Add Integration][my-hass-smarwi] button.
+1. Go to **Settings > Devices & Services**.
+1. In the bottom right corner, select the **⊕ Add Integration** button.
 1. From the list, select **SMARWI**.
 1. Fill in the **Remote ID** that you choose for your SMARWI devices (see above).
 
 The integration should now automatically detect all your SMARWI devices.
+
+**TIP:** You can skip steps 1–4 by opening:
+
+[![Add SMARWI integration to your Home Assistant instance][my-hass-config-start-img]][my-hass-smarwi]
 
 
 ## Entities
@@ -118,9 +126,11 @@ This project is licensed under the [MIT License].
 [smarwi-website]: https://vektiva.com/en/smarwi/
 [smarwi-manual]: https://vektiva.com/downloads/SMARWI_manual_EN.pdf
 [smarwi-api-doc]: https://vektiva.gitlab.io/vektivadocs/en/api/index.html
-[my-hass-integrations]: https://my.home-assistant.io/redirect/integrations/
 [my-hass-mqtt]: https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt
 [my-hass-smarwi]: https://my.home-assistant.io/redirect/config_flow_start/?domain=smarwi
+[my-hass-config-start-img]: https://my.home-assistant.io/badges/config_flow_start.svg
+[my-hacs-repo]: https://my.home-assistant.io/redirect/hacs_repository/?owner=jirutka&repository=hass-smarwi&category=Integration
+[my-hacs-repo-img]: https://my.home-assistant.io/badges/hacs_repository.svg
 [choose-mqtt-broker]: https://www.home-assistant.io/integrations/mqtt/#choose-an-mqtt-broker
 [mqtt-integration]: https://www.home-assistant.io/integrations/mqtt/
 [MIT License]: https://opensource.org/license/MIT
