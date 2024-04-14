@@ -244,13 +244,13 @@ class SmarwiDevice:
             }:
                 await self._async_update_device_registry()
 
+            async_dispatcher_send(self._hass, self.signal_update, changed_props)
+
             if SmarwiDeviceProp.IP_ADDRESS in changed_props:
                 LOGGER.info(
                     f"[{self.name}] Fetching Finetune settings from http://{self.ip_address}"
                 )
                 await self._finetune_settings.async_update()
-
-            async_dispatcher_send(self._hass, self.signal_update, changed_props)
 
         async def handle_online_message(msg: mqtt.ReceiveMessage) -> None:
             LOGGER.debug(
