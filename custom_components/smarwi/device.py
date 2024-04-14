@@ -7,7 +7,6 @@ from functools import cached_property
 import socket
 import struct
 from typing import TYPE_CHECKING, Any, cast  # pyright:ignore[reportAny]
-from homeassistant.helpers.entity import DeviceInfo
 from typing_extensions import override
 
 import aiohttp
@@ -16,6 +15,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send  # pyright:ignore[reportUnknownVariableType]
+from homeassistant.helpers.entity import DeviceInfo
 
 from .const import (
     CONF_REMOTE_ID,
@@ -344,18 +344,30 @@ class FinetuneSettings:
         data = self._data.copy()
         data[key.value] = value
         LOGGER.info(
-            f"[{self._device.name}] Changing finetune setting {key.name} from {self._data[key.value]} to {value}"
+            f"[{self._device.name}] Changing Finetune setting {key.name} from {self._data[key.value]} to {value}"
         )
-        await http_post_data(self._device.ip_address, "scfa", encode_keyval(data))
+        try:
+            await http_post_data(self._device.ip_address, "scfa", encode_keyval(data))
+        except (TimeoutError, aiohttp.ClientError) as err:
+            return LOGGER.error(
+                f"[{self._device.name}] Failed to post Finetune settings to http://{self._device.ip_address}: "
+                + ("timeout exceeded" if isinstance(err, TimeoutError) else str(err))
+            )
         self._data = data  # TODO: race condition?
-
         await self.async_update()
 
     async def async_update(self) -> None:
         """Update Finetune settings from SMARWI via HTTP."""
         assert self._device.ip_address is not None, "ip_address is not known yet"
 
-        data = await http_get(self._device.ip_address, "lcfa")
+        try:
+            data = await http_get(self._device.ip_address, "lcfa")
+        except (TimeoutError, aiohttp.ClientError) as err:
+            return LOGGER.error(
+                f"[{self._device.name}] Failed to get Finetune settings from http://{self._device.ip_address}: "
+                + ("timeout exceeded" if isinstance(err, TimeoutError) else str(err))
+            )
+
         self._data = {
             k: int(v)
             for k, v in decode_keyval(data).items()
