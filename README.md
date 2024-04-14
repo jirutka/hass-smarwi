@@ -13,7 +13,12 @@ It uses a local MQTT broker, no “cloud” service is required.
 ### Using Home Assistant Community Store (HACS)
 
 1. Ensure that [HACS] is installed.
-1. Search for and install the “SMARWI” integration.
+1. Go to **HACS > Integrations**.
+1. Click on the hamburger menu in the top right corner, select **Custom repositories**, and fill in:
+   - Repository: `https://github.com/jirutka/hass-smarwi/`
+   - Category: Integration
+1. Click on the **⊕ Explore & download repositories** button in the bottom right corner, then search for and select **SMARWI**.
+1. Click on the **Download** button in the bottom right corner.
 1. Restart Home Assistant.
 
 
