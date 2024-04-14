@@ -348,7 +348,9 @@ class FinetuneSettings:
             f"[{self._device.name}] Changing Finetune setting {key.name} from {self._data[key.value]} to {value}"
         )
         try:
-            await http_post_data(self._device.ip_address, "scfa", encode_keyval(data))
+            await http_post_data(
+                f"http://{self._device.ip_address}/scfa", encode_keyval(data)
+            )
         except (TimeoutError, aiohttp.ClientError) as err:
             return LOGGER.error(
                 f"[{self._device.name}] Failed to post Finetune settings to http://{self._device.ip_address}: "
@@ -362,7 +364,7 @@ class FinetuneSettings:
         assert self._device.ip_address is not None, "ip_address is not known yet"
 
         try:
-            data = await http_get(self._device.ip_address, "lcfa")
+            data = await http_get(f"http://{self._device.ip_address}/lcfa")
         except (TimeoutError, aiohttp.ClientError) as err:
             return LOGGER.error(
                 f"[{self._device.name}] Failed to get Finetune settings from http://{self._device.ip_address}: "
@@ -396,28 +398,26 @@ def encode_keyval(data: dict[str, Any]) -> str:
     return "\n".join(f"{k}:{v}" for k, v in data.items())  # pyright:ignore[reportAny]
 
 
-async def http_get(host: str, path: str) -> str:
+async def http_get(url: str) -> str:
     """Send HTTP GET request and return the response body."""
-    LOGGER.debug(f"Sending GET http://{host}/{path}")
+    LOGGER.debug(f"Sending GET {url}")
     async with (
         aiohttp.ClientSession(raise_for_status=True, timeout=HTTP_TIMEOUT) as http,
-        http.get(f"http://{host}/{path}") as resp,
+        http.get(url) as resp,
     ):
         data = await resp.text()
-        LOGGER.debug(
-            f"Received response for GET http://{host}/{path}: HTTP {resp.status}\n{data}"
-        )
+        LOGGER.debug(f"Received response for GET {url}: HTTP {resp.status}\n{data}")
         return data
 
 
-async def http_post_data(host: str, path: str, data: str) -> None:
+async def http_post_data(url: str, data: str) -> None:
     """Send HTTP POST request with multipart data as expected by SWARMI."""
     with aiohttp.MultipartWriter("form-data") as mpwriter:
         mpwriter.append(data.encode("ascii")).set_content_disposition(
             "form-data", name="data", filename="/afile"
         )
-        LOGGER.debug(f"POST http://{host}/{path}:\n{data}")
+        LOGGER.debug(f"POST {url}:\n{data}")
         async with aiohttp.ClientSession(
             raise_for_status=True, timeout=HTTP_TIMEOUT
         ) as http:
-            await http.post(f"http://{host}/{path}", data=mpwriter)  # pyright:ignore[reportUnusedCallResult]
+            await http.post(url, data=mpwriter)  # pyright:ignore[reportUnusedCallResult]
