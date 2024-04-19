@@ -58,7 +58,7 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
         """Initialize the cover."""
         super().__init__(device)
         self._position = -1  # unknown
-        self._requested_position = -1  # unknown
+        self._requested_position = -1  # unknown/none
         self._is_moving = False
 
     @property  # superclass uses @cached_property, but that doesn't work here [1]
@@ -108,7 +108,7 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
         if self.device.state_code.is_idle():
             return None
 
-        self._requested_position = -1  # unknown
+        self._requested_position = -1  # unknown/none
         self._position = -1  # unknown
         await self.device.async_stop()
 
@@ -130,14 +130,14 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
             if self.device.closed:
                 self._is_moving = False
                 self._position = 0
-                self._requested_position = 0
+                self._requested_position = -1
             elif self._is_moving:
                 self._is_moving = False
                 if self._requested_position >= 0:
                     self._position = self._requested_position
-                    self._requested_position = -1
                 else:
                     self._position = -1
+                self._requested_position = -1
 
         LOGGER.debug(
             f"[{self.device.name}] id={self.device.id}, state_code={state.name}, closed={self.device.closed}, _is_moving={self._is_moving}, _position={self._position}, _requested_position={self._requested_position}"
