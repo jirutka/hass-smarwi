@@ -74,12 +74,17 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
     @property  # superclass uses @cached_property, but that doesn't work here [1]
     @override
     def is_closing(self) -> bool:  # pyright:ignore[reportIncompatibleVariableOverride]
-        return self._is_moving and self._requested_position < self._position
+        return self._is_moving and not self.is_opening
 
     @property  # superclass uses @cached_property, but that doesn't work here [1]
     @override
     def is_opening(self) -> bool:  # pyright:ignore[reportIncompatibleVariableOverride]
-        return self._is_moving and self._requested_position > self._position
+        # NOTE: SMARWI reports OPENING even when closing to a position,
+        #  so we don't rely on the state_code if we have _requested_position.
+        if self._requested_position >= 0:
+            return self._is_moving and self._requested_position > self._position
+        else:  # if initiated outside of HASS
+            return self.device.state_code.is_opening()
 
     @property  # superclass uses @cached_property, but that doesn't work here [1]
     @override

@@ -96,6 +96,10 @@ class StateCode(IntEnum):
     def _missing_(cls, value: object) -> StateCode:
         return cls.UNKNOWN
 
+    def is_closing(self) -> bool:
+        """Return True if the window is closing."""
+        return 220 <= self.value < 240
+
     def is_error(self) -> bool:
         """Return True if the state indicate an error (or in calibration)."""
         return self.value < 200
@@ -106,7 +110,7 @@ class StateCode(IntEnum):
 
     def is_moving(self) -> bool:
         """Return True if the window is moving."""
-        return 199 < self.value < 250
+        return self.is_opening() or self.is_closing()
 
     def is_near_frame(self) -> bool:
         """Return True if the window is between the frame and the frame sensor."""
@@ -117,6 +121,10 @@ class StateCode(IntEnum):
             StateCode.CLOSING,
             StateCode.CLOSING_NICE,
         )
+
+    def is_opening(self) -> bool:
+        """Return True if the window is opening."""
+        return 200 <= self.value < 220
 
 
 class SmarwiDevice:
