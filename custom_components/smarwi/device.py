@@ -245,7 +245,9 @@ class SmarwiDevice:
             self._status = status
 
             if self.state_code.is_error():
-                LOGGER.error(f"[{self.name}] Reported error: {self.state_code.name}")
+                LOGGER.error(
+                    f"[{self.name}] Reported error: {self.state_code.name} ({self._status.get(SmarwiDeviceProp.STATE_CODE)})"
+                )
 
             if changed_props & {
                 SmarwiDeviceProp.NAME,
