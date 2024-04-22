@@ -74,11 +74,13 @@ class FinetuneSetting(StrEnum):
 class StateCode(IntEnum):
     """SMARWI state codes."""
 
-    CALIBRATION = -1  # Calibration in progress
     UNKNOWN = 0  # Fallback for unknown code
     ERR_WINDOW_LOCKED = 10  # Window is locked to frame
     ERR_MOVE_TIMEOUT = 20  # Operation move to frame sensor from ventilation timeout
     ERR_WINDOW_HORIZ = 30  # Indicates, that window is opened in horizontal position
+    CALIBRATION_1 = 110  # Calibration - after clicking on Continue (window is opening)
+    CALIBRATION_2 = 120  # Calibration - passing the frame sensor (window is opening)
+    CALIBRATION_3 = 130  # Calibration - after clicking on Finish (window is closing)
     OPENING_START = 200  # Moving to frame sensor position within opening phase.
     OPENING = 210  # Opening phase lasts until target ventilation position is reached
     REOPEN_START = 212  # Reopen in executed when open operation is invoked while window position is between frame sensor and ventilation distance
