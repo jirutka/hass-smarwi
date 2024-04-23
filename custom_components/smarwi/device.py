@@ -222,73 +222,6 @@ class SmarwiDevice:
         """Return the SMARWI state code (parameter `s`)."""
         return StateCode(int(self._status.get(SmarwiDeviceProp.STATE_CODE) or 0))
 
-    async def async_init(self) -> None:
-        """Connect to the device."""
-
-        async def handle_status_message(msg: mqtt.ReceiveMessage) -> None:
-            status = decode_keyval(cast(str, msg.payload))  # pyright:ignore[reportAny]
-            status = {
-                SmarwiDeviceProp(k): v
-                for k, v in status.items()
-                if k in list(SmarwiDeviceProp)
-            }
-            changed_props = {
-                name
-                for name in SmarwiDeviceProp
-                if self._status.get(name) != status.get(name)
-            }
-            LOGGER.debug(
-                f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
-            )
-            self._status = status
-
-            if self.state_code.is_error():
-                LOGGER.error(
-                    f"[{self.name}] Reported error: {self.state_code.name} ({self._status.get(SmarwiDeviceProp.STATE_CODE)})"
-                )
-
-            if changed_props & {
-                SmarwiDeviceProp.NAME,
-                SmarwiDeviceProp.IP_ADDRESS,
-                SmarwiDeviceProp.FW_VERSION,
-            }:
-                await self._async_update_device_registry()
-
-            async_dispatcher_send(self._hass, self.signal_update, changed_props)
-
-        async def handle_online_message(msg: mqtt.ReceiveMessage) -> None:
-            LOGGER.debug(
-                f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
-            )
-            if (available := bool(msg.payload == "1")) != self._available:  # pyright:ignore[reportAny]
-                LOGGER.info(
-                    f"[{self.name}] SMARWI {self.id} become {'available' if available else 'unavailable'}"
-                )
-                self._available = available
-                async_dispatcher_send(
-                    self._hass, self.signal_update, {SmarwiDeviceProp.AVAILABLE}
-                )
-            await self.finetune_settings.async_update()
-
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass, f"{self._base_topic}/status", handle_status_message, qos=1
-            )
-        )
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass, f"{self._base_topic}/online", handle_online_message, qos=1
-            )
-        )
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/config/advanced",
-                self.finetune_settings.async_handle_update,
-                qos=1,
-            )
-        )
-
     async def async_open(self, position: int = 100) -> None:
         """Open the window; position is between 0 and 100 %."""
         if position > 1:
@@ -320,6 +253,78 @@ class SmarwiDevice:
             if self.ridge_fixed and self.state_code.is_idle():
                 LOGGER.info(f"[{self.name}] Releasing ridge")
                 await self._async_mqtt_command("stop")
+
+    async def async_init(self) -> None:
+        """Connect to the device."""
+        self._config_entry.async_on_unload(
+            await mqtt.async_subscribe(
+                self._hass,
+                f"{self._base_topic}/status",
+                self._async_handle_status_message,
+                qos=1,
+            )
+        )
+        self._config_entry.async_on_unload(
+            await mqtt.async_subscribe(
+                self._hass,
+                f"{self._base_topic}/online",
+                self._async_handle_online_message,
+                qos=1,
+            )
+        )
+        self._config_entry.async_on_unload(
+            await mqtt.async_subscribe(
+                self._hass,
+                f"{self._base_topic}/config/advanced",
+                self.finetune_settings.async_handle_update,
+                qos=1,
+            )
+        )
+
+    async def _async_handle_status_message(self, msg: mqtt.ReceiveMessage) -> None:
+        status = decode_keyval(cast(str, msg.payload))  # pyright:ignore[reportAny]
+        status = {
+            SmarwiDeviceProp(k): v
+            for k, v in status.items()
+            if k in list(SmarwiDeviceProp)
+        }
+        changed_props = {
+            name
+            for name in SmarwiDeviceProp
+            if self._status.get(name) != status.get(name)
+        }
+        LOGGER.debug(
+            f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
+        )
+        self._status = status
+
+        if self.state_code.is_error():
+            LOGGER.error(
+                f"[{self.name}] Reported error: {self.state_code.name} ({self._status.get(SmarwiDeviceProp.STATE_CODE)})"
+            )
+
+        if changed_props & {
+            SmarwiDeviceProp.NAME,
+            SmarwiDeviceProp.IP_ADDRESS,
+            SmarwiDeviceProp.FW_VERSION,
+        }:
+            await self._async_update_device_registry()
+
+        async_dispatcher_send(self._hass, self.signal_update, changed_props)
+
+    async def _async_handle_online_message(self, msg: mqtt.ReceiveMessage) -> None:
+        LOGGER.debug(
+            f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
+        )
+        if (available := bool(msg.payload == "1")) != self._available:  # pyright:ignore[reportAny]
+            LOGGER.info(
+                f"[{self.name}] SMARWI {self.id} become {'available' if available else 'unavailable'}"
+            )
+            self._available = available
+            async_dispatcher_send(
+                self._hass, self.signal_update, {SmarwiDeviceProp.AVAILABLE}
+            )
+        await self.finetune_settings.async_update()
 
     async def _async_mqtt_command(self, payload: str) -> None:
         LOGGER.debug(f"Sending message to {self._base_topic}/cmd: {payload}")
