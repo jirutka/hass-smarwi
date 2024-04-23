@@ -272,16 +272,12 @@ class SmarwiDevice:
 
         self._config_entry.async_on_unload(
             await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/status",
-                handle_status_message,
+                self._hass, f"{self._base_topic}/status", handle_status_message, qos=1
             )
         )
         self._config_entry.async_on_unload(
             await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/online",
-                handle_online_message,
+                self._hass, f"{self._base_topic}/online", handle_online_message, qos=1
             )
         )
         self._config_entry.async_on_unload(
@@ -289,6 +285,7 @@ class SmarwiDevice:
                 self._hass,
                 f"{self._base_topic}/config/advanced",
                 self.finetune_settings.async_handle_update,
+                qos=1,
             )
         )
 
@@ -326,7 +323,7 @@ class SmarwiDevice:
 
     async def _async_mqtt_command(self, payload: str) -> None:
         LOGGER.debug(f"Sending message to {self._base_topic}/cmd: {payload}")
-        await mqtt.async_publish(self._hass, f"{self._base_topic}/cmd", payload)
+        await mqtt.async_publish(self._hass, f"{self._base_topic}/cmd", payload, qos=2)
 
     async def _async_update_device_registry(self) -> None:
         dev_registry = dr.async_get(self._hass)
