@@ -95,8 +95,6 @@ The integration will create the following entities for each discovered SMARWI de
 | move_speed          | number        | config     | Set movement speed (finetune setting). |
 | opened_hold_power   | number        | config     | Set opened holding power (finetune setting). |
 
-The “config” entities cannot be controlled via MQTT, so the integration connects to the IP address of the device (reported on MQTT) via HTTP protocol.
-
 
 ## Screenshots
 

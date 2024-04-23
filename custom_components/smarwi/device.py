@@ -9,7 +9,6 @@ import struct
 from typing import TYPE_CHECKING, Any, cast  # pyright:ignore[reportAny]
 from typing_extensions import override
 
-import aiohttp
 from homeassistant.components import mqtt
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -22,7 +21,6 @@ from .const import (
     DEVICE_INFO_MANUFACTURER,
     DEVICE_INFO_MODEL,
     DOMAIN,
-    HTTP_TIMEOUT,
     LOGGER,
     signal_device_update,
 )
@@ -258,12 +256,6 @@ class SmarwiDevice:
 
             async_dispatcher_send(self._hass, self.signal_update, changed_props)
 
-            if SmarwiDeviceProp.IP_ADDRESS in changed_props:
-                LOGGER.info(
-                    f"[{self.name}] Fetching Finetune settings from http://{self.ip_address}"
-                )
-                await self._finetune_settings.async_update()
-
         async def handle_online_message(msg: mqtt.ReceiveMessage) -> None:
             LOGGER.debug(
                 f"Received message from {self._base_topic}/online: {msg.payload}"  # pyright:ignore[reportAny]
@@ -276,6 +268,7 @@ class SmarwiDevice:
                 async_dispatcher_send(
                     self._hass, self.signal_update, {SmarwiDeviceProp.AVAILABLE}
                 )
+            await self.finetune_settings.async_update()
 
         self._config_entry.async_on_unload(
             await mqtt.async_subscribe(
@@ -289,6 +282,13 @@ class SmarwiDevice:
                 self._hass,
                 f"{self._base_topic}/online",
                 handle_online_message,
+            )
+        )
+        self._config_entry.async_on_unload(
+            await mqtt.async_subscribe(
+                self._hass,
+                f"{self._base_topic}/config/advanced",
+                self.finetune_settings.async_handle_update,
             )
         )
 
@@ -352,47 +352,38 @@ class FinetuneSettings:
         return self._data.get(key.value)
 
     async def async_set(self, key: FinetuneSetting, value: int) -> None:
-        if not self._device.ip_address:
-            return
         data = self._data.copy()
         data[key.value] = value
         LOGGER.info(
             f"[{self._device.name}] Changing Finetune setting {key.name} from {self._data[key.value]} to {value}"
         )
-        try:
-            await http_post_data(
-                f"http://{self._device.ip_address}/scfa", encode_keyval(data)
-            )
-        except (TimeoutError, aiohttp.ClientError) as err:
-            return LOGGER.error(
-                f"[{self._device.name}] Failed to post Finetune settings to http://{self._device.ip_address}: "
-                + ("timeout exceeded" if isinstance(err, TimeoutError) else str(err))
-            )
-        self._data = data  # TODO: race condition?
+        await self._device._async_mqtt_command(f"scfa01/1|{encode_keyval(data)}")  # pyright:ignore[reportPrivateUsage]
         await self.async_update()
 
     async def async_update(self) -> None:
-        """Update Finetune settings from SMARWI via HTTP."""
-        assert self._device.ip_address is not None, "ip_address is not known yet"
+        """Send command to request the Finetune settings from SMARWI."""
+        await self._device._async_mqtt_command("lcfa")  # pyright:ignore[reportPrivateUsage]
 
-        try:
-            data = await http_get(f"http://{self._device.ip_address}/lcfa")
-        except (TimeoutError, aiohttp.ClientError) as err:
-            return LOGGER.error(
-                f"[{self._device.name}] Failed to get Finetune settings from http://{self._device.ip_address}: "
-                + ("timeout exceeded" if isinstance(err, TimeoutError) else str(err))
-            )
+    async def async_handle_update(self, msg: mqtt.ReceiveMessage) -> None:
+        """Handle message from MQTT subtopic config/advanced.
 
-        self._data = {
-            k: int(v)
-            for k, v in decode_keyval(data).items()
-            if k != "cvdist"  # cvdist is ready-only
-        }
-        async_dispatcher_send(
-            self._device._hass,  # pyright:ignore[reportPrivateUsage]
-            self._device.signal_update,
-            {SmarwiDeviceProp.FINETUNE_SETTINGS},
+        Update the config data and notify subscribed entities if there's a change.
+        """
+        LOGGER.debug(
+            f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
         )
+        data = {
+            k: int(v)
+            for k, v in decode_keyval(cast(str, msg.payload)).items()  # pyright:ignore[reportAny]
+            if k != "cvdist"  # cvdist is read-only
+        }
+        if data != self._data:
+            self._data = data
+            async_dispatcher_send(
+                self._device._hass,  # pyright:ignore[reportPrivateUsage]
+                self._device.signal_update,
+                {SmarwiDeviceProp.FINETUNE_SETTINGS},
+            )
 
 
 def parse_ipv4(packed_ip: int) -> str:
@@ -408,28 +399,3 @@ def decode_keyval(payload: str) -> dict[str, str]:
 def encode_keyval(data: dict[str, Any]) -> str:
     """Encode the given dict as key:value pairs separated by newlines."""
     return "\n".join(f"{k}:{v}" for k, v in data.items())  # pyright:ignore[reportAny]
-
-
-async def http_get(url: str) -> str:
-    """Send HTTP GET request and return the response body."""
-    LOGGER.debug(f"Sending GET {url}")
-    async with (
-        aiohttp.ClientSession(raise_for_status=True, timeout=HTTP_TIMEOUT) as http,
-        http.get(url) as resp,
-    ):
-        data = await resp.text()
-        LOGGER.debug(f"Received response for GET {url}: HTTP {resp.status}\n{data}")
-        return data
-
-
-async def http_post_data(url: str, data: str) -> None:
-    """Send HTTP POST request with multipart data as expected by SWARMI."""
-    with aiohttp.MultipartWriter("form-data") as mpwriter:
-        mpwriter.append(data.encode("ascii")).set_content_disposition(
-            "form-data", name="data", filename="/afile"
-        )
-        LOGGER.debug(f"POST {url}:\n{data}")
-        async with aiohttp.ClientSession(
-            raise_for_status=True, timeout=HTTP_TIMEOUT
-        ) as http:
-            await http.post(url, data=mpwriter)  # pyright:ignore[reportUnusedCallResult]

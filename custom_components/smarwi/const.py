@@ -3,8 +3,6 @@
 from logging import Logger, getLogger
 from typing import Final
 
-from aiohttp import ClientTimeout
-
 LOGGER: Final[Logger] = getLogger(__package__)
 
 NAME: Final = "SMARWI"
@@ -14,9 +12,6 @@ DEVICE_INFO_MANUFACTURER: Final = "Vektiva"
 DEVICE_INFO_MODEL: Final = "SMARWI"
 
 CONF_REMOTE_ID: Final = "remote_id"
-
-HTTP_TIMEOUT: Final = ClientTimeout(total=10)
-"""Timeout in seconds for HTTP requests."""
 
 NEAR_FRAME_POSITION: Final = 5
 """The window position to be reported when it's between the frame and the frame sensor."""
