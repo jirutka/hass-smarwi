@@ -238,7 +238,7 @@ class SmarwiDevice:
                 if self._status.get(name) != status.get(name)
             }
             LOGGER.debug(
-                f"Received message from {self._base_topic}/status:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
+                f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
             )
             self._status = status
 
@@ -258,7 +258,7 @@ class SmarwiDevice:
 
         async def handle_online_message(msg: mqtt.ReceiveMessage) -> None:
             LOGGER.debug(
-                f"Received message from {self._base_topic}/online: {msg.payload}"  # pyright:ignore[reportAny]
+                f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
             )
             if (available := bool(msg.payload == "1")) != self._available:  # pyright:ignore[reportAny]
                 LOGGER.info(
