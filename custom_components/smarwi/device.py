@@ -256,30 +256,19 @@ class SmarwiDevice:
 
     async def async_init(self) -> None:
         """Connect to the device."""
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/status",
-                self._async_handle_status_message,
-                qos=1,
+        for topic, handler in (
+            ("status", self._async_handle_status_message),
+            ("online", self._async_handle_online_message),
+            ("config/advanced", self.finetune_settings.async_handle_update),
+        ):
+            self._config_entry.async_on_unload(
+                await mqtt.async_subscribe(
+                    self._hass,
+                    f"{self._base_topic}/{topic}",
+                    handler,
+                    qos=1,
+                )
             )
-        )
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/online",
-                self._async_handle_online_message,
-                qos=1,
-            )
-        )
-        self._config_entry.async_on_unload(
-            await mqtt.async_subscribe(
-                self._hass,
-                f"{self._base_topic}/config/advanced",
-                self.finetune_settings.async_handle_update,
-                qos=1,
-            )
-        )
 
     async def _async_handle_status_message(self, msg: mqtt.ReceiveMessage) -> None:
         status = decode_keyval(cast(str, msg.payload))  # pyright:ignore[reportAny]
