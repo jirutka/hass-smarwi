@@ -1,0 +1,70 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Před přidáním této integrace nastavte MQTT integraci v Home Assistantu a nakonfigurujte vaše SMARWI zařízení tak, aby používala váš lokální MQTT broker.",
+        "data": {
+          "remote_id": "Remote ID (nakonfigurováno ve SMARWI Settings)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "ridge_inside": {
+        "name": "Hřeben zaveden"
+      }
+    },
+    "cover": {
+      "cover": {
+        "name": "Otvírání okna"
+      }
+    },
+    "number": {
+      "max_open_position": {
+        "name": "Maximální otevřená poloha"
+      },
+      "move_speed": {
+        "name": "Rychlost pohybu"
+      },
+      "frame_speed": {
+        "name": "Rychlost pohybu u rámu"
+      },
+      "move_power": {
+        "name": "Výkon motoru při pohybu"
+      },
+      "frame_power": {
+        "name": "Výkon motoru při pohybu u rámu"
+      },
+      "closed_hold_power": {
+        "name": "Přídržná síla v zavřené poloze"
+      },
+      "opened_hold_power": {
+        "name": "Přídržná síla v otevřené poloze"
+      },
+      "closed_position": {
+        "name": "Doladění polohy zavřeného okna"
+      },
+      "lock_err_trigger": {
+        "name": "Citlivost na chybu uzamčení okna"
+      },
+      "calibrated_distance": {
+        "name": "Kalibrovaná vzdálenost"
+       }
+    },
+    "sensor": {
+      "rssi": {
+        "name": "Síla signálu"
+      }
+    },
+    "switch": {
+      "ridge_fix": {
+        "name": "Fixace okna",
+        "state": {
+          "on": "Zafixováno",
+          "off": "Uvolněno"
+        }
+      }
+    }
+  }
+}
