@@ -93,19 +93,22 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
 
     @override
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:  # pyright:ignore[reportAny]
-        self._requested_position = 100
-        await self.device.async_open()
+        if self._position != 100:
+            self._requested_position = 100
+            await self.device.async_open()
 
     @override
     async def async_close_cover_tilt(self, **kwargs: Any) -> None:  # pyright:ignore[reportAny]
-        self._requested_position = 0
-        await self.device.async_close()
+        if self._position != 0:
+            self._requested_position = 0
+            await self.device.async_close()
 
     @override
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:  # pyright:ignore[reportAny]
         pos = int(kwargs[ATTR_TILT_POSITION])  # pyright:ignore[reportAny]
-        self._requested_position = pos
-        await self.device.async_open(pos)
+        if self._position != pos:
+            self._requested_position = pos
+            await self.device.async_open(pos)
 
     @override
     async def async_stop_cover_tilt(self, **kwargs: Any) -> None:  # pyright:ignore[reportAny]
