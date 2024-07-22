@@ -161,7 +161,7 @@ class SmarwiDevice:
         """Return immutable part of the DeviceInfo."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.id)},
-            name=self.name,
+            name=(self.name or self.id),
             manufacturer=DEVICE_INFO_MANUFACTURER,
             model=DEVICE_INFO_MODEL,
         )
