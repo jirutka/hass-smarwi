@@ -22,6 +22,7 @@ from .const import (
     DEVICE_INFO_MODEL,
     DOMAIN,
     LOGGER,
+    SIGNAL_DISCOVERY_NEW,
     signal_device_update,
 )
 
@@ -286,6 +287,16 @@ class SmarwiDevice:
         LOGGER.debug(
             f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
         )
+        # If this is the first update, i.e. the device has just been added,
+        # send the discovery_new signal to register entities.
+        if not self._status:
+            self._status = status
+            async_dispatcher_send(
+                self._hass,
+                SIGNAL_DISCOVERY_NEW,
+                cast(str, self._config_entry.entry_id),  # pyright:ignore[reportAny]
+                self.id,
+            )
         self._status = status
 
         if self.state_code.is_error():

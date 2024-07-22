@@ -8,9 +8,8 @@ from homeassistant.components import mqtt
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.dispatcher import async_dispatcher_send  # pyright:ignore[reportUnknownVariableType]
 
-from .const import CONF_REMOTE_ID, DOMAIN, LOGGER, SIGNAL_DISCOVERY_NEW
+from .const import CONF_REMOTE_ID, DOMAIN, LOGGER
 from .device import SmarwiDevice
 
 PLATFORMS: list[Platform] = [
@@ -48,8 +47,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         hass_data[device_id] = device = SmarwiDevice(hass, entry, device_id)
         await device.async_init()
-
-        async_dispatcher_send(hass, SIGNAL_DISCOVERY_NEW, entry_id, device_id)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
