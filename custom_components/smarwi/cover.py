@@ -64,7 +64,11 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
     @property  # superclass uses @cached_property, but that doesn't work here [1]
     @override
     def available(self) -> bool:  # pyright:ignore[reportIncompatibleVariableOverride]
-        return self._attr_available and not self.device.state_code.is_error()
+        return (
+            self._attr_available
+            and self.device.ridge_fixed
+            and not self.device.state_code.is_error()
+        )
 
     @property  # superclass uses @cached_property, but that doesn't work here [1]
     @override
