@@ -239,9 +239,11 @@ class SmarwiDevice:
 
     async def async_stop(self) -> None:
         """Stop the movement action if moving."""
-        # If the motor is not moving, "stop" releases the ridge.
         if self.state_code.is_moving():
             LOGGER.info(f"[{self.name}] Stopping movement of window")
+            # XXX: The first "stop" will stop the movement and also release the
+            #  ridge, the second "stop" will fix the ridge again. See #17.
+            await self._async_mqtt_command("stop")
             await self._async_mqtt_command("stop")
 
     async def async_toggle_ridge_fixed(self, state: bool) -> None:

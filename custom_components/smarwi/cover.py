@@ -116,7 +116,7 @@ class SmarwiCover(SmarwiEntity, CoverEntity):
 
     @override
     async def async_stop_cover_tilt(self, **kwargs: Any) -> None:  # pyright:ignore[reportAny]
-        # If the motor is not moving, "stop" releases the ridge.
+        # Do nothing if the motor is not moving.
         if self.device.state_code.is_idle():
             return None
 
