@@ -248,15 +248,12 @@ class SmarwiDevice:
 
     async def async_toggle_ridge_fixed(self, state: bool) -> None:
         """Fix (True) or release (False) the ridge."""
-        if state:
-            if not self.ridge_fixed:
-                LOGGER.info(f"[{self.name}] Fixing ridge")
-                await self._async_mqtt_command("stop")
-        else:
-            # If the motor is moving, "stop" stops it.
-            if self.ridge_fixed and self.state_code.is_idle():
-                LOGGER.info(f"[{self.name}] Releasing ridge")
-                await self._async_mqtt_command("stop")
+        if state and not self.ridge_fixed:
+            LOGGER.info(f"[{self.name}] Fixing ridge")
+            await self._async_mqtt_command("stop")
+        elif not state and self.ridge_fixed:
+            LOGGER.info(f"[{self.name}] Releasing ridge")
+            await self._async_mqtt_command("stop")
 
     async def async_init(self) -> None:
         """Connect to the device."""

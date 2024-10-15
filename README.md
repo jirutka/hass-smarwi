@@ -81,7 +81,7 @@ The integration will create the following entities for each discovered SMARWI de
 | Name                | Platform      | Category   | Description
 | ------------------- | ------------- | ---------- | --------------------------------------------------------------------------|
 | cover               | cover         |            | Control the window tilt position (open, close, stop, set position). |
-| ridge_fix           | switch        |            | Fix or release the ridge (can be used only if the motor is currently not  |moving).
+| ridge_fix           | switch        |            | Fix or release the ridge. |
 | ridge_inside        | binary_sensor | diagnostic | Shows if the ridge is inside the device (i.e. it’s operational). |
 | rssi                | sensor        | diagnostic | Monitor WiFi signal strength (disabled by default). |
 | calibrated_distance | number        | config     | Set calibrated distance (finetune setting, disabled by default). |
