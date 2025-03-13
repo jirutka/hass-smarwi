@@ -1,7 +1,5 @@
 basedpyright==1.10.4
 colorlog>=6.7.0
-homeassistant==2024.2.5
-homeassistant-stubs==2024.2.5
-# TODO: Remove after homeassistant update voluptuous to >=0.14.
-voluptuous-stubs>=0.1.1
+homeassistant==2024.8.0
+homeassistant-stubs==2024.8.0
 ruff>=0.3.0
