@@ -2,8 +2,6 @@
 # SPDX-FileCopyrightText: 2024 Jakub Jirutka <jakub@jirutka.cz>
 """Integration for Vektiva SMARWI window opener."""
 
-from typing import cast
-
 from homeassistant.components import mqtt
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -29,8 +27,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         LOGGER.error("MQTT integration is not available")
         return False
 
-    remote_id: str = entry.data[CONF_REMOTE_ID]  # pyright:ignore[reportAny]
-    entry_id: str = entry.entry_id  # pyright:ignore[reportAny]
+    remote_id: str = entry.data[CONF_REMOTE_ID]
+    entry_id: str = entry.entry_id
     hass_data: dict[str, SmarwiDevice] = hass.data.setdefault(  # pyright:ignore[reportAny]
         DOMAIN, {}
     ).setdefault(entry_id, {})
@@ -64,6 +62,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass_data: dict[str, SmarwiDevice] = hass.data[DOMAIN]  # pyright:ignore[reportAny]
 
     if unloaded := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        del hass_data[cast(str, entry.entry_id)]  # pyright:ignore[reportAny]
+        del hass_data[entry.entry_id]
 
     return unloaded

@@ -3,7 +3,11 @@
 from typing import Any  # pyright:ignore[reportAny]
 from typing_extensions import override
 
-from homeassistant.config_entries import ConfigFlow, CONN_CLASS_LOCAL_PUSH, FlowResult
+from homeassistant.config_entries import (
+    ConfigFlow,
+    CONN_CLASS_LOCAL_PUSH,
+    ConfigFlowResult,
+)
 from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
@@ -31,7 +35,7 @@ class SmarwiConfigFlow(ConfigFlow, domain=DOMAIN):
     @override
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
         if user_input is not None:
             return self.async_create_entry(title=NAME, data=user_input)

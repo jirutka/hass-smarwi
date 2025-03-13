@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2024 Jakub Jirutka <jakub@jirutka.cz>
-from typing import cast
 from typing_extensions import override
 
 from homeassistant.components.sensor import (
@@ -28,7 +27,7 @@ async def async_setup_entry(
     hass_data: dict[str, SmarwiDevice] = hass.data[DOMAIN][entry.entry_id]  # pyright:ignore[reportAny]
 
     async def async_discover_device(entry_id: str, device_id: str) -> None:
-        if entry_id != cast(str, entry.entry_id):  # pyright:ignore[reportAny]
+        if entry_id != entry.entry_id:
             return  # not for us
         assert hass_data[device_id] is not None
         async_add_entities([SmarwiRssiSensor(hass_data[device_id])])
@@ -47,7 +46,7 @@ class SmarwiRssiSensor(SmarwiEntity, SensorEntity):
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
-    )  # pyright:ignore[reportCallIssue]
+    )
 
     @override
     async def async_handle_update(self, changed_props: set[SmarwiDeviceProp]) -> None:

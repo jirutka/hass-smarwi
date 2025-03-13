@@ -134,7 +134,7 @@ class SmarwiDevice:
     ) -> None:
         """Initialize. Run `.async_init()` afterwards."""
         super().__init__()
-        config: dict[str, Any] = entry.data  # pyright:ignore[reportAny]
+        config = entry.data
 
         self._hass = hass
         self._config_entry = entry
@@ -267,7 +267,7 @@ class SmarwiDevice:
             )
 
     async def _async_handle_status_message(self, msg: mqtt.ReceiveMessage) -> None:
-        status = decode_keyval(cast(str, msg.payload))  # pyright:ignore[reportAny]
+        status = decode_keyval(cast(str, msg.payload))
         status = {
             SmarwiDeviceProp(k): v
             for k, v in status.items()
@@ -279,7 +279,7 @@ class SmarwiDevice:
             if self._status.get(name) != status.get(name)
         }
         LOGGER.debug(
-            f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"  # pyright:ignore[reportAny]
+            f"Received message from {msg.topic}:\n{msg.payload}\nChanged properties: {[e.name for e in changed_props]}"
         )
         # If this is the first update, i.e. the device has just been added,
         # send the discovery_new signal to register entities.
@@ -288,7 +288,7 @@ class SmarwiDevice:
             async_dispatcher_send(
                 self._hass,
                 SIGNAL_DISCOVERY_NEW,
-                cast(str, self._config_entry.entry_id),  # pyright:ignore[reportAny]
+                self._config_entry.entry_id,
                 self.id,
             )
         self._status = status
@@ -308,10 +308,8 @@ class SmarwiDevice:
         async_dispatcher_send(self._hass, self.signal_update, changed_props)
 
     async def _async_handle_online_message(self, msg: mqtt.ReceiveMessage) -> None:
-        LOGGER.debug(
-            f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
-        )
-        if (available := bool(msg.payload == "1")) != self._available:  # pyright:ignore[reportAny]
+        LOGGER.debug(f"Received message from {msg.topic}: {msg.payload}")
+        if (available := bool(msg.payload == "1")) != self._available:
             LOGGER.info(
                 f"[{self.name}] SMARWI {self.id} become {'available' if available else 'unavailable'}"
             )
@@ -366,12 +364,10 @@ class FinetuneSettings:
 
         Update the config data and notify subscribed entities if there's a change.
         """
-        LOGGER.debug(
-            f"Received message from {msg.topic}: {msg.payload}"  # pyright:ignore[reportAny]
-        )
+        LOGGER.debug(f"Received message from {msg.topic}: {msg.payload}")
         data = {
             k: int(v)
-            for k, v in decode_keyval(cast(str, msg.payload)).items()  # pyright:ignore[reportAny]
+            for k, v in decode_keyval(cast(str, msg.payload)).items()
             if k != "cvdist"  # cvdist is read-only
         }
         if data != self._data:

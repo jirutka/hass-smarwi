@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2024 Jakub Jirutka <jakub@jirutka.cz>
-from typing import Any, cast  # pyright:ignore[reportAny]
+from typing import Any  # pyright:ignore[reportAny]
 from typing_extensions import override
 
 from homeassistant.components.switch import (
@@ -27,7 +27,7 @@ async def async_setup_entry(
     hass_data: dict[str, SmarwiDevice] = hass.data[DOMAIN][entry.entry_id]  # pyright:ignore[reportAny]
 
     async def async_discover_device(entry_id: str, device_id: str) -> None:
-        if entry_id != cast(str, entry.entry_id):  # pyright:ignore[reportAny]
+        if entry_id != entry.entry_id:
             return  # not for us
         assert hass_data[device_id] is not None
         async_add_entities([SmarwiRidgeFixedSwitch(hass_data[device_id])])
@@ -43,7 +43,7 @@ class SmarwiRidgeFixedSwitch(SmarwiEntity, SwitchEntity):
     entity_description = SwitchEntityDescription(
         key="ridge_fix",
         device_class=SwitchDeviceClass.SWITCH,
-    )  # pyright:ignore[reportCallIssue]
+    )
 
     @override
     async def async_turn_on(self, **_: Any) -> None:

@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2024 Jakub Jirutka <jakub@jirutka.cz>
-from typing import cast
 from typing_extensions import override
 
 from homeassistant.components.binary_sensor import (
@@ -28,7 +27,7 @@ async def async_setup_entry(
     hass_data: dict[str, SmarwiDevice] = hass.data[DOMAIN][entry.entry_id]  # pyright:ignore[reportAny]
 
     async def async_discover_device(entry_id: str, device_id: str) -> None:
-        if entry_id != cast(str, entry.entry_id):  # pyright:ignore[reportAny]
+        if entry_id != entry.entry_id:
             return  # not for us
         assert hass_data[device_id] is not None
         async_add_entities([SmarwiRidgeInsideBinarySensor(hass_data[device_id])])
@@ -45,7 +44,7 @@ class SmarwiRidgeInsideBinarySensor(SmarwiEntity, BinarySensorEntity):
         key="ridge_inside",
         device_class=BinarySensorDeviceClass.TAMPER,
         entity_category=EntityCategory.DIAGNOSTIC,
-    )  # pyright:ignore[reportCallIssue]
+    )
 
     @override
     async def async_handle_update(self, changed_props: set[SmarwiDeviceProp]) -> None:

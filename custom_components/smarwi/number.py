@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2024 Jakub Jirutka <jakub@jirutka.cz>
-from typing import cast
 from typing_extensions import override
 
 from homeassistant.components.number import (
@@ -26,21 +25,21 @@ SETTINGS_ENTITY_DESCRIPTIONS = [
         native_min_value=0,
         entity_registry_enabled_default=False,
         mode=NumberMode.BOX,
-    ),  # pyright:ignore[reportCallIssue]
+    ),
     NumberEntityDescription(
         key=FinetuneSetting.CLOSED_POSITION.name,
         entity_category=EntityCategory.CONFIG,
         native_min_value=-20,
         native_max_value=20,
         native_step=1,
-    ),  # pyright:ignore[reportCallIssue]
+    ),
     NumberEntityDescription(
         key=FinetuneSetting.LOCK_ERR_TRIGGER.name,
         entity_category=EntityCategory.CONFIG,
         native_min_value=0,
         native_max_value=40,
         native_step=1,
-    ),  # pyright:ignore[reportCallIssue]
+    ),
     *(
         NumberEntityDescription(
             key=key.name,
@@ -48,7 +47,7 @@ SETTINGS_ENTITY_DESCRIPTIONS = [
             native_min_value=0,
             native_max_value=100,
             native_unit_of_measurement="%",
-        )  # pyright:ignore[reportCallIssue]
+        )
         for key in FinetuneSetting
         if key
         not in (
@@ -69,7 +68,7 @@ async def async_setup_entry(
     hass_data: dict[str, SmarwiDevice] = hass.data[DOMAIN][entry.entry_id]  # pyright:ignore[reportAny]
 
     async def async_discover_device(entry_id: str, device_id: str) -> None:
-        if entry_id != cast(str, entry.entry_id):  # pyright:ignore[reportAny]
+        if entry_id != entry.entry_id:
             return  # not for us
         assert hass_data[device_id] is not None
 
