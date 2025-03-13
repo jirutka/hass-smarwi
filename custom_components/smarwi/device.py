@@ -6,7 +6,7 @@ from enum import IntEnum, StrEnum
 from functools import cached_property
 import socket
 import struct
-from typing import TYPE_CHECKING, Any, cast  # pyright:ignore[reportAny]
+from typing import Any, cast  # pyright:ignore[reportAny]
 from typing_extensions import override
 
 from homeassistant.components import mqtt
@@ -25,11 +25,6 @@ from .const import (
     SIGNAL_DISCOVERY_NEW,
     signal_device_update,
 )
-
-if TYPE_CHECKING:
-    from functools import cached_property
-else:
-    from homeassistant.backports.functools import cached_property
 
 __all__ = ["FinetuneSetting", "SmarwiDevice", "SmarwiDeviceProp", "StateCode"]
 
