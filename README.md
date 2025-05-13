@@ -121,7 +121,7 @@ This project is licensed under the [MIT License].
 [latest-release]: https://github.com/jirutka/hass-smarwi/releases/latest
 [releases-shield]: https://img.shields.io/github/release/jirutka/hass-smarwi.svg?style=flat-square
 [HACS]: https://hacs.xyz/
-[smarwi-website]: https://vektiva.com/en/smarwi/
+[smarwi-website]: https://vektiva.com/index.php/en/
 [smarwi-manual]: https://vektiva.com/downloads/SMARWI_manual_EN.pdf
 [smarwi-api-doc]: https://vektiva.gitlab.io/vektivadocs/en/api/index.html
 [my-hass-mqtt]: https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt
