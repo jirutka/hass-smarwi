@@ -58,6 +58,9 @@ For each SMARWI device:
 
 SMARWI should be connected to your Wi-Fi network and MQTT broker now.
 
+It may be possible that your device will not connect to the MQTT broker anonymously.
+If that is the case, a user needs to be created in the MQTT broker and the credentials need to be put into the device configuration.
+The **Remote ID** acts as the username and the **Remote Key** acts as the password to the MQTT broker.
 
 ### 3. Add integration
 
