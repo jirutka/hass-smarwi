@@ -37,8 +37,16 @@ It uses a local MQTT broker, no “cloud” service is required.
 
 ### 1. Set up MQTT broker
 
-1. Set up your MQTT broker, if you don’t already have one (see [Choose an MQTT broker][choose-mqtt-broker] if you’re unsure).
-1. [Add the MQTT integration][my-hass-mqtt] to your Home Assistant instance (see [mqtt-integration][documentation]).
+1. Install the Mosquitto broker app and set up the [MQTT integration][mqtt-integration], if you don’t have it already (see [documentation][mosquitto-addon]).
+1. Create a new (MQTT) user for SMARWI. You have two options:
+   * Go to **[Settings > Apps > Mosquitto broker][my-hass-mosquitto] > Configuration** and click **Add** below **Logins** to create a local MQTT user,
+   * _or_ go to **[Settings > People > Users][my-hass-users]** and click **Add user** to create a Home Assistant user that can be used to connect to MQTT.
+
+> [!IMPORTANT]
+> Don’t set a password longer than 18 characters (limitation of SMARWI)!
+
+> [!NOTE]
+> You may also use an external Mosquitto broker (or any other MQTT broker), for example, if you are _not_ running Home Assistant Operating System (HAOS).
 
 
 ### 2. Prepare SMARWI devices
@@ -46,11 +54,11 @@ It uses a local MQTT broker, no “cloud” service is required.
 For each SMARWI device:
 
 1. Connect to your SMARWI device and open its web interface in the browser (see section 6.1.2 in the [SMARWI manual][smarwi-manual]).
-1. Go to **Settings > Advanced**, fill domain name or IP address of your local MQTT broker (see above), and click **Save**.
+1. Go to **Settings > Advanced**, fill domain name or IP address of your local MQTT broker (i.e. your Home Assistant, if you use the Mosquitto broker app on HAOS), and click **Save**.
 1. Go to **Basic** and fill in the following:
    - **Device name** – this will be used in Home Assistant to identify each SMARWI device;
-   - **Remote ID** – choose any name (no registration needed), but the same for all your SMARWI devices, it will be used as a prefix for MQTT topics (`ion/<remote-id>/%<device-id>/+`);
-   - **Remote Key** – leave empty;
+   - **Remote ID** – the MQTT username (use the same for all your SMARWI devices), it will also be used as a prefix for MQTT topics (`ion/<remote-id>/%<device-id>/+`);
+   - **Remote Key** – the MQTT password (max 18 characters) or leave empty if you connect to the MQTT broker anonymously;
    - **Wifi Mode** – change to `Client`;
    - **Select Wifi network** – select SSID of your Wi-Fi network;
    - **Wifi Password** – password for your Wi-Fi network (max 32 characters).
@@ -58,9 +66,6 @@ For each SMARWI device:
 
 SMARWI should be connected to your Wi-Fi network and MQTT broker now.
 
-It may be possible that your device will not connect to the MQTT broker anonymously.
-If that is the case, a user needs to be created in the MQTT broker and the credentials need to be put into the device configuration.
-The **Remote ID** acts as the username and the **Remote Key** acts as the password to the MQTT broker.
 
 ### 3. Add integration
 
@@ -127,11 +132,12 @@ This project is licensed under the [MIT License].
 [smarwi-website]: https://vektiva.com/index.php/en/
 [smarwi-manual]: https://vektiva.com/downloads/SMARWI_manual_EN.pdf
 [smarwi-api-doc]: https://vektiva.gitlab.io/vektivadocs/en/api/index.html
-[my-hass-mqtt]: https://my.home-assistant.io/redirect/config_flow_start/?domain=mqtt
 [my-hass-smarwi]: https://my.home-assistant.io/redirect/config_flow_start/?domain=smarwi
 [my-hass-config-start-img]: https://my.home-assistant.io/badges/config_flow_start.svg
+[my-hass-mosquitto]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=core_mosquitto
+[my-hass-users]: https://my.home-assistant.io/redirect/users/
 [my-hacs-repo]: https://my.home-assistant.io/redirect/hacs_repository/?owner=jirutka&repository=hass-smarwi&category=Integration
 [my-hacs-repo-img]: https://my.home-assistant.io/badges/hacs_repository.svg
-[choose-mqtt-broker]: https://www.home-assistant.io/integrations/mqtt/#choose-an-mqtt-broker
+[mosquitto-addon]: https://github.com/home-assistant/addons/blob/master/mosquitto/DOCS.md
 [mqtt-integration]: https://www.home-assistant.io/integrations/mqtt/
 [MIT License]: https://opensource.org/license/MIT
