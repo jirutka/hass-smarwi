@@ -1,5 +1,5 @@
 # SMARWI Integration
-<img src="https://raw.githubusercontent.com/jirutka/hass-smarwi/master/images/logo.png" width="250px" align="right">
+<img src="https://raw.githubusercontent.com/jirutka/hass-smarwi/master/custom_components/smarwi/brand/logo.png" width="250px" align="right">
 
 [![GitHub Release][releases-shield]][releases]
 
